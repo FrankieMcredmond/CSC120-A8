@@ -10,6 +10,11 @@ public class MonsterMash implements Contract{
     ArrayList<String> inventory;
     ArrayList<String> actions;
 
+
+    /**
+     * Constructs an instance of the MonsterMash class
+     */
+
     public MonsterMash(){
     this.size= 5;
     this.totalX=0;
@@ -23,13 +28,19 @@ public class MonsterMash implements Contract{
     }
 
 
-
+    /**
+     * adds item to inventory arraylist
+     * @param item
+     */
     public void grab(String item){
         this.actions.add("GRAB");
         this.inventory.add(item);
     }
 
-
+    /**
+     * Removes item from inventory
+     * @param item
+     */
     public String drop(String item){
         this.actions.add("DROP");
         this.inventory.remove(item);
@@ -38,7 +49,10 @@ public class MonsterMash implements Contract{
 
 
 
-
+    /**
+     * Gives player description of item properties
+     * @param item
+     */
     public void examine(String item){
         this.actions.add("EXAMINE");
         if (item.equals("Avocado")){
@@ -50,7 +64,10 @@ public class MonsterMash implements Contract{
         else{ System.out.println("This object has no properties");}
     }
 
-
+    /**
+     * Lets players use special item properties
+     * @param item
+     */
     public void use(String item){
         this.actions.add("USE");
         if (item.equals("Avocado")){
@@ -69,7 +86,12 @@ public class MonsterMash implements Contract{
 
 
 
-
+    /**
+     * Let's player move 5 units in a specific direction
+     * @param direction
+     * @return boolean whether action was successful
+     * NOTE: Every time the walk method is used it depletes the players energy by 10 units
+     */
     public boolean walk(String direction){
         if (direction.equals("FORWARD")){
             this.actions.add("FORWARD");
@@ -84,13 +106,21 @@ public class MonsterMash implements Contract{
         else{ return false;}
     }
 
+    /**
+     * Let's player move x units along the x axis, and y units along the y axis
+     * @param x units player wants to move along x axis
+     * @param y units player wants to move along y axis
+     * @return  whether player was successful in flying or not, if returns false player couldn't fly all the way because of the ground
+     */
     public boolean fly(int x, int y){
         this.actions.add("FLY");
         this.totalX+=x;
         if ((this.totalY+y)>=0){
             this.totalY+=y;
             return true;}
-        else{return false;}
+        else{
+            this.totalY=0;
+            return false;}
     }
     
 
@@ -98,7 +128,11 @@ public class MonsterMash implements Contract{
 
 
 
-
+    /**
+     * Shrinks player by a factor of 1
+     * 
+     * @return int Player's current size
+     */
     public Number shrink(){
         this.actions.add("SHRINK");
         this.size-=1;
@@ -106,6 +140,11 @@ public class MonsterMash implements Contract{
 
     }
 
+    /**
+     * Grows player by a factor of 1
+     * 
+     * @return int Player's current size
+     */
     public Number grow(){
         this.actions.add("GROW");
         this.size+=1;
@@ -116,7 +155,10 @@ public class MonsterMash implements Contract{
 
 
 
-    
+    /**
+     * Replenishes Player's Energy to 100
+     * 
+     */
     public void rest(){
         this.actions.add("REST");
         this.energy=100;
@@ -124,7 +166,10 @@ public class MonsterMash implements Contract{
 
 
 
-
+    /**
+     * Undoes players most recent action
+     * NOTE: the only actions able to be Undone are GRAB, FORWARD, BACK, SHRINK, and GROW 
+     */
     public void undo(){
         String lastAction= this.actions.get(this.actions.size()-1);
         if (lastAction.equals("GRAB")){
@@ -143,12 +188,48 @@ public class MonsterMash implements Contract{
         else if (lastAction.equals("SHRINK")){
             this.size+=1;
         }
-        else if (lastAction.equals("GRAB")){
+        else if (lastAction.equals("GROW")){
             this.size-=1;
         }
         else{System.out.println("Your last action cannot be undone");}
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -192,7 +273,7 @@ public class MonsterMash implements Contract{
             if (selectItem.equals("EXIT")){
                 Continue=false;
             }
-            else{
+            else if (test.inventory.contains(selectItem)){
             System.out.println("\n\nYou've selected "+ selectItem+". Would you like to USE, EXAMINE, or DROP this item?");
                 String selectOption= Player.nextLine();
                 if (selectOption.equals("USE")){
@@ -204,7 +285,8 @@ public class MonsterMash implements Contract{
                 else if (selectOption.equals("DROP")){
                     test.drop(selectItem);
                 }
-                else{Continue=false;}}}
+                else{Continue=false;}}
+            else{System.out.println("Object not in inventory");}}
     
         Player.close();
     }
